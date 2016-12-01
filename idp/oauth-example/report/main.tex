@@ -1,0 +1,212 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{mystyle}
+
+\begin{document}
+
+\title{
+\small Identity and Privacy \\
+Course project II \\
+\huge \textsc{DIY OAuth 2.0}
+}
+
+\author{Emil 'Skeen' Madsen - 20105376 \\
+\href{mailto:sverre@cs.au.dk}{Sverre Bisgaard Rasmussen - 20083549}
+}
+
+\date{}
+
+\maketitle
+
+\hrule
+
+\section*{Introduction}
+
+  In this project we will try to showcase a naive implementation of
+  the
+  \href{http://tools.ietf.org/html/rfc6749}{OAuth 2.0 Framework}.
+  We will dig a little into the threat model of OAuth 2.0 and look at
+  some security aspects of our implementation.
+  Finally, we will draw a comparison to the OpenID Connect protocol.
+
+  It should be noted that this particular implementation are not
+  production quality and should not be
+  used in practice.
+  It would be a better idea to use a widely distributed and acknowledged
+  library for an OAuth implementation.
+
+\section*{Naive Implementation of OAuth 2.0}
+
+  We have implemented the 'Implicit Grant' model, which is good for
+  public clients with a fixed address.
+  Also we have taken a lot of shortcuts so fx, is the client registration
+  phase faked.
+  See the Disclaimer section for more such shortcuts.
+
+  We have three servers running:
+  \begin{description}
+    \item[Client] Python based webserver
+      serving static files. \\
+      \url{http://mozart.cs.au.dk:45451}
+    \item[Resource server]
+      Node.js based. \\
+      \url{http://mozart.cs.au.dk:45454}
+    \item[Authentication
+      server]
+      Node.js based. \\
+      \url{http://mozart.cs.au.dk:45455}
+  \end{description}
+
+  Notice, the web servers are only available from the university network
+  (and only as long as the machines are not rebooted).
+  It should be possible to access this network, either from the physical
+  network or via VPN or (ssh) proxy.
+  To test the servers, we recommend tuning a browser to the client
+  \url{http://mozart.cs.au.dk:45451}.
+
+
+  \subsection*{Client}
+  This can essentially be replaced by any conforming webserver, we've
+  decided to go with a python webserver because it's simple (12 lines of
+  code) and easy to run.
+
+  \subsection*{Authorization and Resource servers}
+
+  We considered several options for the two other server entities,
+  everything from Java Servlets and Dart to Python.
+  We did a bit of research on how to implement HTTP servers in Dart, but
+  decided to go with a language, that we have some experience with:
+  JavaScript on a Node.js server.
+
+\section*{Disclaimer}
+  We've made several assumptions to simplify the implementation of the
+  system.
+  - For instance to avoid having a database at each service entity.
+
+  These are obvious shortcomings of our implementation, but does not
+  interfere with the main objective of the system.
+  Any real implementation should avoid these simplifications, as they
+  severely limit the usability of the system.
+
+  \begin{itemize}
+    \item
+      At the index.html on the client (landing page), we assume that the
+      user is not logged in. \\
+      The correct thing to do, would be to check if the user is indeed
+      logged in, and generate content based on that (for instance,
+      hiding the login button, or replacing it with a logout
+      equivalent).
+
+    \item
+      We currently only support a single clientID, namely the hard-coded
+      'brain' clientID. \\
+      The correct thing to do, would be for the auth-server to have
+      database of valid clientIDs, instead of using hardcoded entities.
+
+    \item
+      We've decided to leave the scope parameter, as our application
+      contains only a single scope. \\
+      In order to support multiple scopes, this parameter should be
+      passed around and registered with the access token, such that the
+      access token would only yield access to the given scope.
+
+    \item
+      At the login.html on the auth server (login and accept scope
+      page), we assume that the user has been confronted with a login
+      prompt and logged in already. That is, we have faked
+      authentication for the user on the authorization server.
+      Hence we simply welcome the user (user1342). \\
+      The correct thing to do would be to actually authenticate the user
+      at the server. Fx through a username and password.
+
+    \item
+      At the login.html on the auth server, the user is not able to
+      decline accepting the scope.
+      Trying to do so, will simply disable the 'cancel' button.
+
+    \item
+      We've currently hard-coded the access token to '1337'.
+      This means there's only a single access token for the entire
+      system. \\
+      The correct thing to do would be to actually generate the access
+      tokens when requested.
+      The auth-server would then connect to the resource-server and
+      register it, or they'd simply share the same underlying database
+      server of access tokens.
+
+    \item
+      The returnURLs are currently hard-coded.  Which means the user
+      will be returned to a specific site, rather then the one they came
+      from.
+      - This is not an issue in our system, due to the limited number of
+      pages. \\
+      The correct thing to do would be to actually pass the returnURL as
+      a parameter, and return to it when a return is indeed needed.
+
+    \item
+      The client server doesn't itself pull data from the server.
+      This is done from the javascript of the served page.
+      While this is strictly speaking incorrect, it doesn't really
+      matter, as the client server is indeed passed the access token
+      (i.e.  it is in the server log).
+      - We've made a button on the loggedin.html page, which emulates
+      the server actually asking the resource server for data. \\
+      The correct thing to do would be to actually pull the data from
+      the client server, which would be necessary, if the client for
+      instance wanted to build their own database with the resource
+      servers provided data.
+      - Or if the client was to serve static data to the user, rather
+      than have the users javascript built up the browser page.
+
+  \end{itemize}
+
+\section*{Threat Model for OAuth 2.0}
+
+  \subsection*{Threat: Optaining Access Tokens}
+
+  An adversary listening to the connection between the
+  authorization server and the user (resource owner)
+  may obtain the access token, because the access token is
+  transmitted in the URI fragment.
+
+  The solution is to use TLS in the communication between the user
+  and the authz server.
+  This is actually also specified in the
+  \href{http://tools.ietf.org/html/rfc6749}{OAuth 2.0
+  specification}.
+
+  \subsection*{Threat: Guessing the credentials}
+
+  An adversary may attempt to authenticate as the resource owner against
+  the authorization server.
+
+  In our implementation this is guaranteed to succeed as the
+  authentication process is faked.
+
+\section*{Comparison with OpenID Connect protocol}
+
+  The OpenID Connect protocol builds on top of OAuth 2.0.
+  It emphasizes the authentication of the resource owner and generally
+  specifies the parameters exchanged in the protocol.
+
+  \subsection*{Changes to the client registration phase}
+
+  Now the client registration should be made dynamically and initiated
+  on a discovery mechanism (that the client instigate).
+
+  \subsection*{Changes to the Implicit}
+
+  Regarding authentication of the resource owner, the parameters are
+  made very specific.
+  We should explicitly add parameters for scope, return pointer and a
+  nonce.
+
+  \section*{Conclusion}
+
+  Our implementation definitely suffers from the prototype status and
+  lots of faked code regarding user authentication and client
+  registration.
+
+  Looking at OpenID Connect, these things are much more specifically
+  mentioned how to implement, and as such it feels safer to use.
+
+\end{document}

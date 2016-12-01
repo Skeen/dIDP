@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>BRAIN - the client</title>
+    </head>
+    <body>
+        <h1>Welcome to the BRAIN client</h1>
+        <p>Users should authenticate via the Authorization server to use this site.</p>
+        <!-- TODO: Only show this button, if we're not logged in -->
+        <button id='login_button'>LOGIN WITH AUTH-SERVER</button>
+        <script>
+            var button = document.getElementById('login_button');
+            button.addEventListener("click", function()
+            {
+                // We're not logged in, and we have to that
+                // NOTE: Only one scope supported, hence no scope passed.
+                // Redirect
+                // ClientID
+                // ResponseType
+                window.location = "http://mozart.cs.au.dk:45455/OAUTH2?clientID=brain&responseType=ImplicitGrant&returnURL=loggedin.html";
+            });
+        </script>
+    </body>
+</html>

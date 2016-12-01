@@ -1,0 +1,360 @@
+Thu Oct 30 14:13:24 CET 2014
+
+Privacy and Identity
+====================
+
+Lecturer:
+
+    Gert Læssøe Mikkelsen,
+    Alexandra Institute
+    Phd Cryptography.
+    Nye måder at kryptere på end blot
+    Multiparty computation (Sukkerroeauktion - auktion af rettigheder til sukkerroeproduktion)
+         Polynomiel tid, men ikke praktisk tid før sukkerroerne.
+
+Course Schedule for today:
+
+    Introduction
+
+Course Schedule for next time (Nov 4.):
+
+    Open API's:
+
+     - OAuth2
+     - OpenID
+     - etc.
+
+    Reading material comming up
+
+    HANDIN Onsdag, d. 5, kl. 13.
+
+
+Om kurset
+
+    Vi snakker dansk.
+    Ingen lærerbog, men forskellig literattur.
+    Forskellige forelæsere.
+    3-4 obligatoriske opgaver i grupper (1-3 personer).
+    Eksamen: Valgfrit relevant projekt - Individuel eller i grupper.
+    Mundtlig eksamen, hvor projektet præsenteres og spørgsmål stilles til
+    projektet og kurset generelt.
+
+Alexandra Instituttet
+    Privat virksomhed
+    100 personer i Aarhus/Cph.
+    Meget bredt forskningsresultater.
+    Konsulentydelser.
+    Gert kommer fra sikkerhed (Hardcore datalogi)
+    Se ABC4Trust, OpenID, OAUTH
+
+Privacy
+    Giver det mening på internettet?
+
+    Erik Schmidt - udenfor kontekst meget grænseoverskridende for privacy
+            - CNET private oplysninger førte til google ban.
+    Mark Zuckerberg - samme ukritisk
+        - Køber selv sommerhuse rundt om eget sommerhus for privacy
+    Snowden
+        Akedemisk debat
+    IPhone6
+        Tillader fuld kryptering
+        FBI kritik
+        EU Cyber Crime Center kritik
+    EFF.org
+        Metadata matters
+        Nok metadata affører data (især big data)
+    Se og Hør sagen omkring nets
+        Tys tys kilde lækker information omkring kendte mennesker
+    Snapchat - måske burde ikke uploade frække billeder
+
+    Menneskeheds rettigheder (EU Convention)
+        elastikagtigt.
+
+    Breve forventes sikkerhed, men ikke internet?
+
+Identity
+
+    Blanding af formel krypto og lidt lettere
+
+    Kontekstafhængig følsomhed.
+
+    Forskellige attributter/Claims er sværere at verificere.
+    For ikke at sige Autentifikation:Authentication := Validere at afsenderen er korrekt,
+     vs Authorization:=
+        Har afsenderen rettighedet til at tilgå resourcen
+        for delegating access to data (OAuth 2.0 is a protocol for this)
+        If the data accessed are attributes about the user, this is
+        also authentication.
+
+
+    Sikkerhed/Privacy by design (??? Eksempler)
+
+    Tidshorisont af data?
+
+Målsætning
+    Offline verification of age, fx. Ligesom visning af DK-Kørekort i Systembolaget i Sverige.
+    (Selective disclosure) Undgå for meget viden gives (fx ikke cpr.nr sammen med alder)
+    Untraceable (anonymity) := Holsterbro politi udsteder ved ikke noget om at
+        Gert er ved System-bolaget. Der skal helst ikke kunne laves en database
+        over Gert's færden
+        SP kan ikke kontakte CA og få identiteten på brugeren.
+    Unlinkable (pseudonymity) :=
+        Systembolaget kan ikke se at det er den samme bruger der besøger dem.
+        To Service Providers (SP) kan ikke linke brugerens identitet (ingen
+        genkendelse på tværs af SP
+
+    Unforgeability (Bruger kan ikke selv finde på claims)
+
+API Economy
+    cloud computing.
+    Service købes og er nu vores egen udbudte service. Dvs. to forskellig cloud
+        providers, hvor den ene er afhængig af den anden.
+
+OPEN data
+    Spansk by og turistbilleder opspores på internettet opspores og bruges til
+    at optimere hvor der gøres rent.
+    OPEN data kan en gang i mellem bruges på nye spændende/praktiske måder.
+
+Lovgivning
+    EU regulation
+        Ny lov om at eID løsninger som NemID skal kunne bruges i alle lande i EU
+
+Authentication
+
+    CA (identity provider) (Issuer of credentials)
+    SP (relying party)
+    Vise credentials: Akreditiv
+
+    Digital signatur
+        Så kan beskeden bruges til at vise til andre at: "Prøv at se hvad Gert har sagt!"
+        X509
+            NemID
+        SP stoler på CA
+        CA konfererer med Gert for at dele public key
+        Gert kan sende signaturer sammen med beskeder til SP.
+        Det betyder at hvis SP kender CA's pk, s.a kan SP verificere Gert's besked.
+
+        Negativ:
+            Full Disclosure
+            Linkable
+
+        Klassisk version (IdP)
+            Så skal CA være online (kontaktes af Gert)
+
+        Privacy ABC
+            Selective/Minimal Disclosure
+            Sender ikke hele certifikatet til SP
+
+            Minimal disclosure vs selective disclosure
+            Selective: the user can choose which information to send
+            Minimal, The SP only receives the minimally needed info
+
+        SAML
+
+    Identity silos , <analogy>
+
+OAuth II
+    Protocol for authorization:
+    Protocol for delegating access to data (OAuthII is a protocol for this)
+    If the data accessed are attributes about the user, this is
+    also authentication (provides login for user).
+
+    IETF Standard
+
+NemID (Example of Classic Authentication PKI (x509))
+
+    an ID for OCES (for everything that is not the bank)
+        O is for Offentlig
+        secret key (sk) is stored elsewhere.
+    another ID for banking
+
+SAML is an example of Token based (Classical Identity provider (IdP)
+    (NemLogin - single sign on (SSO), like to su.dk, ..
+        Identity provider scheme.
+        ???Is it the same as SignInWithFacebook
+
+HANDIN Onsdag, d. 5, kl. 13.
+
+    Build simple test website using something like Facebook for login.
+    Create police regarding some attribute.
+    compare with Oauth 2.0
+    refer to the goals (analyse).
+
+    Mail to Gert
+
+    Notes:
+        Facebook actually just improved their unlinkability (If users choose not to share their (unique?) name)
+
+Privacy by design
+
+    Default settings are not changed.
+
+HANDIN Onsdag d. 19, kl. 13. !!!!!
+
+    IMPLEMENTATION OF OAuth 2.0 Sunshine Scenario.
+
+
+
+
+
+Tue Nov 11 14:16:15 CET 2014
+
+Gæsteforlæser, Berit
+    PhD Matematik
+
+Copenhaged conference 3. December.
+
+
+Tue Nov 18 14:16:28 CET 2014
+
+Exam:
+    December small project and report
+    January - oral exam
+        Project questions
+        Questions about Everything in the course
+
+ABC4Trust
+
+    Pseudonym <-> using the key.
+
+
+    Needed crypto:
+        The Camenish-lysyanskaya Private Credential System
+
+The Camenish-lysyanskaya Private Credential System
+
+    Verifying the User Credentials (set of attributes)
+
+        Digital signatures
+
+            Keygen -> sk,pk
+            sign(m, sk) -> Signature
+            verify(m, pk, signature) -> {yes|no}
+
+        Above is not enough, so enhanced to the following (Blind)
+
+            Keygen -> sk,pk
+            Protocol: sign(m_0, m_1, ..., m_n , sk) -> Signature
+
+                Only user sees the signature ( the issuer do not see what he
+                signs, *blind* signature)
+                Also includes a 'scope' agreement from the user.
+                So the user can decide if certain messages requested are
+                signed.
+
+            verify(m, pk, signature) -> {yes|no}
+
+        Proof of knowledge (Prover <-> Verifier)
+
+            PK{(\alpha) : y = g^\alpha }
+
+            The prover proves \alpha and proves to the verifier that he knows
+            the value.
+
+        Cyclic group
+
+            Two elements in the cyclic group, (g, h).
+            multiplication (g * h) means multiplication with a modulo operation
+            on a variable relating to the cyclic group (\Gamma) (g * h = g * h
+            mod \Gamma), And it stays in the group.
+
+            (This is not as weird as cyclic group in Elliptic curve crypto,
+            which is though more efficient.)
+
+        Discrete Logarithm problem (D.L.)
+
+            Given (g^x, g) it is hard to compute x.
+
+            ("Baby Step, Giant Step" is faster than bruteforce)
+
+        Decisional Diffie Hellman problem (D.D.H.).
+
+            Based on D.L.
+
+            \forall a,b,c \in_R [0, P-1]
+            {(g, g^a, g^b, g^(a*b))} =?= {(g, g^a, g^b, g^c)}
+
+        Strong RSA problem
+            primes: p q
+            n = p * q, u
+
+            It is hard to compute forall e, v: e > 1 s.t. v^e = u mod n
+
+            But you need large keys (because of 'baby step, giant step')
+
+            Compare with AES-<key bitsize>:
+            AES-256 Better than RSA-2048
+
+        Elliptic curve
+
+            Alternative theory of Cyclic groups.
+
+        Proofs of Knowledge (P.K.)
+
+            PK { (\alpha, \beta) : y = g^\alpha \and z = g^\beta }
+
+            Simplest one:
+            schnorr`s identify scheme
+
+            Prover P identity to Verifier V
+
+            P -(uID, x)-> V
+                          V.verify(uID, x)
+
+            simpel PK:
+                PK { (\alpha) : y = g^\alpha }
+
+            Protocol
+                q is the order of <g>
+
+                P knows g q y \alpha
+                V knows g q y
+
+                P choose r_\alpha \in_R [0, q-1]
+                Commit phase:
+                P send (to V) t = g^(r_\alpha)
+                Challenge:
+                V send (back to V) c \in_R {0,1}^k
+                P send s_\alpha = r_\alpha - c*\alpha mod q
+                V guesses t^? = g^(s_\alpha) * y^c, where y = g^\alpha
+                V verifies soundness:
+                          g^(r_\alpha) = g^(r_\alpha) * g^(- c * \alpha)
+                                       * g^(\alpha * c) = g^(r_\alpha)
+                                       = g^(r_\alpha)
+            The protocol can be made 2 steps instead of 3 steps (above).
+
+                Fiat-Shamir Heuristic: Schnorr signatures
+
+                Non-interactive zero knowledge
+
+                Interval Proofs
+
+    Features:
+
+       Untracability: Blind Signatures
+       Unlinkability: PK "Proof of Knowledge"
+
+    Used in
+
+     * Identity Mixers (IBM)
+     * Branch Signatures
+
+
+Thu Nov 20 15:42:34 CET 2014
+
+Next handins
+
+    Brands signatures more effective than CL signatures (does not need cyclic
+    ... - and will thus be better with elliptic curves)
+
+    Linkable, hvis samme signatur brugt mere end en gang.
+    Mangler ordentlige sikkerhedsbeviser.
+
+    Deadline December 1st kl 13.00
+
+    Implement U-Prove
+
+Final Project
+
+    Deadline 19th December
+    Choose subject before December 1st.

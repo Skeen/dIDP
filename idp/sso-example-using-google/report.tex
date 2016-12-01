@@ -1,0 +1,199 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{mystyle}
+
+\begin{document}
+
+\title{\small Identity and Privacy\\
+       Course Project I\\
+       \huge \textsc{SSO Example using Google Plus}\\
+       }
+       \author{
+        \href{mailto:sverre@cs.au.dk}{Sverre Bisgaard Rasmussen - 20083549}\\
+       }
+
+\maketitle
+\hrule
+
+\subsection*{What I did}
+I chose Google for this project. I did not want to create a facebook.com
+profile, which could have been an alternative.
+
+Google supplies succinct documentation, and I found a nice tutorial on
+th subject, which I followed:
+\url{https://developers.google.com/+/quickstart/javascript}
+
+As such a website were created with a nice "Log in with Google Plus"
+button.
+
+\subsubsection*{Web page:}
+\begin{comment}
+\url{http://localhost:45414}, \url{http://birc02.daimi.au.dk:45414}
+
+\subsubsection*{Client Id:}
+\url{405157659036-hd07ho25rj6bhen0v5taq7pod4ifm25f.apps.googleusercontent.com}
+\end{comment}
+
+Server is running from \url{http://Birc02.daimi.au.dk:45414}.
+
+Notice, this is available ONLY from the university network. Use a vpn or
+proxy (fx through ssh) to access Birc02 like the normal llama workhorse.
+If this is not possible, please just download the file from the network
+({\tt 'curl -O http://Birc02.daimi.au.dk:45414/index.html'}) and serve
+it yourself from localhost with fx ‘{\tt python -m SimpleHTTPServer}’.
+
+\subsubsection*{Result}
+
+This created a server pulling my information from google plus when I
+accessed it.
+
+\subsection*{Playing around with the API}
+
+The simple test website were customized in the following way:
+\begin{itemize}
+\item A header line were added
+\item A new section were added at the top
+\item A new script were inserted to append information to the section
+  mentioned above. It uses the API to fetch:
+  \begin{itemize}
+  \item Age range of the ‘me’ user (see
+    \url{https://developers.google.com/+/api/latest/people#resource})
+  \item Relationship status of the ‘me’ user \\
+    If the relationship status of the ‘me’ user is ‘single’ then a list of
+    friends are shown.
+  \end{itemize}
+\end{itemize}
+
+All changes are clearly marked in the code.
+
+\subsection*{Flow}
+
+The website accesses the Identity of the user through Google for
+authentication.
+
+The following is a list of attributes accessed:
+\begin{itemize}
+  \item Age range
+  \item Display name
+  \item List of circled people (As strictly allowed by the user in
+    contact with google)
+\end{itemize}
+
+The access is granted in the following way:
+
+\begin{itemize}
+  \item The developer sets up an account at google and requests a
+    project at their ‘Developer console’.
+    The developer console is where the developer:
+    \begin{itemize}
+      \item puts requests for use of Google API’s.
+        This project requests the ‘Google+ API’
+      \item requests credentials from Google.
+        This comes in the form of (OAuth 2.0) a client ID and a client
+        secret.
+      \item setup javascript origin which is so google can provide
+        authentication to only the sites that the developer specifies.
+    \end{itemize}
+  \item The web app uses JavaScript to obtain authenticated user info
+    (classical identity provider)
+    \begin{itemize}
+      \item User initiates access request by pressing a button on the webpage
+      \item The button fires some JavaScript (from google’s API) with the following
+        custom info:
+        \begin{itemize}
+          \item Scope: ‘plus-login’
+          \item client ID
+          \item callback
+            \begin{itemize}
+              \item where to enter the JavaScript when the request is answered by google.
+            \end{itemize}
+        \end{itemize}
+      \item The user signs in to google and verifies what to disclose
+        (which circled people to disclose).
+      \item The web-app (the users JavaScript klient) receives a signed
+        token from google in the callback
+        (‘{\tt authResult['access\_token']}'), which is used to access
+        information through Google.
+      \item The token is fx used to access the display name and age
+        range of the user via a Google API call:
+
+        {\tt gapi.client.plus.people.get({ 'userId': ‘me' })}
+
+      \item If the page is not automatically refreshed (or anything went
+        wrong), the web app presents the user with personal information
+        using calls to Google via the signed token.
+      \item The signed token can also be used outside of JS-API calls.
+        Google provides a HTTP API so the following works:
+        \begin{itemize}
+          \item Read and copy the 'access-token' variable from the
+            signed token from google.
+          \item Retrieve the userID.
+          \item Replace YYY with the userID and XXX with the value of
+            the access-token in the following line:
+
+            {\tt curl -X GET
+              '\url{https://www.googleapis.com/plus/v1/people/YYY?access\_token=XXX}}
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\subsection*{OAuth Notes}
+The flow above about how the access is granted matches very well with
+the OAuth 2 protocol (as described in the PDF from Alexandra (See
+section 2.2 of "Comparative analysis - Web-based Identity Management
+Systems”).
+
+The flow seems to be of the type 'Implicit Grant' – which is optimized
+for public clients known to operate a particular redirection URI.
+
+\subsubsection*{Client Registration}
+The web app (client) has been registered at Google with the information
+about client type (‘public') and the client Redirection Endpoint (yet to
+be tested — google (the Authz Server) should publish the authorization
+credentials here).
+
+Less important are the shared information about:
+
+\begin{quote}the application name, description, logo image, acceptance
+  of legal terms, etc…\end{quote}
+
+A unique client ID is agreed upon.
+
+A client secret were also exchanged
+
+\subsubsection*{Resource owner access grant - Implicit grant}
+\begin{description}
+  \item[(1., 2., 3.)] The user (Resource Owner) initiates contact and is served a
+JavaScript that redirects to Google (on button clicked)
+\item[(4., 5., 6., 7.)] The resource owner agrees with Google (Authorization
+server) about the scope
+\item[(8., 9., 10.)] The authorization server sends an encryption of an access
+token to the resource owner and redirects to the client’s web app (I
+might have made a mistake, because sometimes I have to refresh the
+webpage to get it to work).
+\item[(11., 12., 13.)] The client's web app gets the access token (It is not
+send to the Client)
+\item[(14.)] The resource owner’s browser should send the token to the client.
+I have not implemented this.
+\end{description}
+
+\subsubsection*{Client Access}
+If the last point (14.) had been implemented, the client data could be
+accessed like this:
+\begin{quote}{\tt curl -X GET
+    '\url{https://www.googleapis.com/plus/v1/people/YYY?access\_token=XXX'}}\end{quote}
+
+\subsection*{Goals Achieved}
+\subsubsection*{Selective disclosure}
+The user is able to select level of disclosure regarding the list of
+circled people.
+\subsubsection*{Minimal disclosure}
+The user only discloses an unspecified age in the attribute: ‘ageRange’
+\subsubsection*{Anonymity (Untraceability)}
+Google knows everything
+\subsubsection*{Pseudonymity (Unlinkability)}
+It is not obvious, if Google allow multiple Google+ profiles. If that is
+the case, it might provide pseudonymity.
+
+% that's all folks
+\end{document}

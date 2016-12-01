@@ -1,0 +1,54 @@
+\ProvidesPackage{mystyle}
+
+%packages
+%\usepackage[left=2cm,right=2cm,top=3cm,bottom=3cm]{geometry}
+%\usepackage{a4wide}
+
+\usepackage[pdftex]{graphicx}
+\usepackage{verbatim}
+\usepackage{ulem}
+\usepackage{hyperref}
+\usepackage{hhline}
+\usepackage{array}
+%\usepackage{stmaryrd}
+
+%\usepackage[danish]{babel}
+\usepackage{t1enc}
+\usepackage[utf8x]{inputenc}
+%\usepackage[utf8]{inputenc}
+
+%Warning: tipa declares many non-standard macros used by utf8x to
+%interpret utf8 characters but extra packages might have to be added
+%(e.g. "textgreek" for Greek letters not already in tipa).
+%Use coqdoc's option -p to add new packages.
+\usepackage{tipa}
+
+\usepackage[T1]{fontenc}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\tup}{\{}{\}}
+
+
+%declare where to look for graphics
+\graphicspath{{gfx/}}
+
+%wrapper til images (align along tekst)
+\usepackage{wrapfig}
+
+%Ekstra Packages (copied from example_proofs.tex by Freek) - added by sbr
+\usepackage{amsmath,amssymb} 	 % American Mathematical Society has produced several packages for use with LaTeX
+%\usepackage{wasysym}
+\renewcommand{\leq}{\leqslant}     % make <= look nicer
+\renewcommand{\geq}{\geqslant}     % make >= look nicer
+% Italic theta and omega
+\let\OldTheta\Theta
+\renewcommand{\Theta}{\varTheta}
+\let\OldOmega\Omega
+\renewcommand{\Omega}{\varOmega}
+
+% Til linieret kodeeksempler:
+% The moreverb package extends the verbatim package, providing a listing environment and a \listinginput command, which
+% line-number the text of the file. The package also has a \verbatimtabinput command, that honours TAB characters in the % input (the package’s listing environment and the \listinginput command also both honour TAB).
+
+\newcommand{\V}[1]{\left\{\mathit{#1}\right\}}
